@@ -1,79 +1,134 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>商品レビュー</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
-            line-height: 1.6;
-        }
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>商品レビュー</title>
+        <style>
+            body {
+                font-family: 'Arial', sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f4f4f4;
+                color: #333;
+                line-height: 1.6;
+            }
 
-        header {
-            background-color: #4285f4;
-            color: #fff;
-            padding: 1em 0;
-            text-align: center;
-        }
+            header {
+                background-color: #4285f4;
+                color: #fff;
+                padding: 1em 0;
+                text-align: center;
+            }
 
-        h1 {
-            margin: 0;
-        }
+            h1 {
+                margin: 0;
+            }
 
-        table {
-            width: 100%;
-            margin: 2em auto;
-            border-collapse: collapse;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-        }
+            table {
+                width: 100%;
+                margin: 2em auto;
+                border-collapse: collapse;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                background-color: #fff;
+            }
 
-        th, td {
-            padding: 1em;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
+            th,
+            td {
+                padding: 1em;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
 
-        th {
-            background-color: #4285f4;
-            color: #fff;
-        }
+            th {
+                background-color: #4285f4;
+                color: #fff;
+            }
 
-        tbody tr:hover {
-            background-color: #f5f5f5;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>商品レビュー表</h1>
-    </header>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>ユーザー名</th>
-                <th>年齢</th>
-                <th>評価</th>
-                <th>レビュー理由</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% personas.forEach(item => { %>
-            <tr>
-                <td><%= item.id %></td>
-                <td><%= item.username %></td>
-                <td><%= item.age %></td>
-                <td><%= item.rating %></td>
-                <td><%= item.reason %></td>
-            </tr>
-            <% }); %>
-        </tbody>
-    </table>
-</body>
+            tbody tr:hover {
+                background-color: #f5f5f5;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>商品レビュー表</h1>
+            <label for="sortSelect">評価順：</label>
+            <select id="sortSelect" onchange="sortTable()">
+                <option value="default">デフォルト</option>
+                <option value="high">高い順</option>
+                <option value="low">低い順</option>
+            </select>
+        </header>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ユーザー名</th>
+                    <th>年齢</th>
+                    <th>評価</th>
+                    <th>レビュー理由</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% personas.forEach(item=> { %> <tr>
+                        <td>
+                            <%= item.id %>
+                        </td>
+                        <td>
+                            <%= item.username %>
+                        </td>
+                        <td>
+                            <%= item.age %>
+                        </td>
+                        <td data-rating="<%= item.rating %>">
+                            <%= item.rating %>
+                        </td>
+                        <td>
+                            <%= item.reason %>
+                        </td>
+                    </tr>
+                    <% }); %>
+            </tbody>
+        </table>
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script>
+            function sortTable() {
+                var sortOrder = $("#sortSelect").val();
+
+                // tbody要素を取得し、すべての行を取得します
+                var tbody = $("tbody");
+                var rows = tbody.find("tr").toArray();
+
+                // デフォルトの場合はID順にソートします
+                if (sortOrder === "default") {
+                    rows.sort(function (a, b) {
+                        var aId = parseInt($(a).find("td:first-child").text());
+                        var bId = parseInt($(b).find("td:first-child").text());
+                        return aId - bId;
+                    });
+                } else {
+                    // それ以外の場合はdata-rating属性に基づいてソートします
+                    rows.sort(function (a, b) {
+                        var aValue = parseInt($(a).find("td[data-rating]").data("rating"));
+                        var bValue = parseInt($(b).find("td[data-rating]").data("rating"));
+
+                        if (sortOrder === "low") {
+                            return aValue - bValue;
+                        } else if (sortOrder === "high") {
+                            return bValue - aValue;
+                        } else {
+                            return 0; // デフォルト以外の場合はソートなし
+                        }
+                    });
+                }
+
+                // ソートされた行を再度tbodyに追加します
+                tbody.empty();
+                $.each(rows, function (index, row) {
+                    tbody.append(row);
+                });
+            }
+        </script>
+    </body>
 </html>
