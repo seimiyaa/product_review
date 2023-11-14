@@ -1,14 +1,79 @@
 <!DOCTYPE html>
 <html lang="ja">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>product_review</title>
-        <style>
-        </style>
-    </head>
-    <script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>商品レビュー</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+        }
 
-    </script>
-    </body>
+        header {
+            background-color: #4285f4;
+            color: #fff;
+            padding: 1em 0;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        table {
+            width: 100%;
+            margin: 2em auto;
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        th, td {
+            padding: 1em;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4285f4;
+            color: #fff;
+        }
+
+        tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>商品レビュー表</h1>
+    </header>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ユーザー名</th>
+                <th>年齢</th>
+                <th>評価</th>
+                <th>レビュー理由</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% personas.forEach(item => { %>
+            <tr>
+                <td><%= item.id %></td>
+                <td><%= item.username %></td>
+                <td><%= item.age %></td>
+                <td><%= item.rating %></td>
+                <td><%= item.reason %></td>
+            </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</body>
 </html>
