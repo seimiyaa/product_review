@@ -59,6 +59,15 @@
                 <option value="high">高い順</option>
                 <option value="low">低い順</option>
             </select>
+            <label for="filterSelect">評価絞り込み：</label>
+            <select id="filterSelect" onchange="filterTable()">
+                <option value="all">すべて</option>
+                <option value="1">評価1</option>
+                <option value="2">評価2</option>
+                <option value="3">評価3</option>
+                <option value="4">評価4</option>
+                <option value="5">評価5</option>
+            </select>
         </header>
         <table>
             <thead>
@@ -71,7 +80,8 @@
                 </tr>
             </thead>
             <tbody>
-                <% personas.forEach(item=> { %> <tr>
+                <% personas.forEach(item=> { %>
+                    <tr>
                         <td>
                             <%= item.id %>
                         </td>
@@ -88,27 +98,37 @@
                             <%= item.reason %>
                         </td>
                     </tr>
-                    <% }); %>
+                <% }); %>
             </tbody>
         </table>
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
         <script>
-            function sortTable() {
+            // 元のデータを保持するための変数
+            var originalRows;
+
+            $(document).ready(function () {
+                // 初回ロード時にデータをバックアップ
+                originalRows = $("tbody tr").toArray();
+                $("#sortSelect, #filterSelect").change(function () {
+                    sortAndFilterTable();
+                });
+            });
+
+            function sortAndFilterTable() {
                 var sortOrder = $("#sortSelect").val();
+                var filterValue = $("#filterSelect").val();
 
-                // tbody要素を取得し、すべての行を取得します
-                var tbody = $("tbody");
-                var rows = tbody.find("tr").toArray();
+                // 元のデータからコピーを作成2回目の検索できなくなっちゃうから
+                var rows = originalRows.slice();
 
-                // デフォルトの場合はID順にソートします
-                if (sortOrder === "default") {
-                    rows.sort(function (a, b) {
-                        var aId = parseInt($(a).find("td:first-child").text());
-                        var bId = parseInt($(b).find("td:first-child").text());
-                        return aId - bId;
-                    });
-                } else {
-                    // それ以外の場合はdata-rating属性に基づいてソートします
+                // フィルタリング
+                rows = rows.filter(function (row) {
+                    var rowRating = parseInt($(row).find("td[data-rating]").data("rating"));
+                    return filterValue === "all" || rowRating === parseInt(filterValue);
+                });
+
+                // ソート
+                if (sortOrder !== "default") {
                     rows.sort(function (a, b) {
                         var aValue = parseInt($(a).find("td[data-rating]").data("rating"));
                         var bValue = parseInt($(b).find("td[data-rating]").data("rating"));
@@ -118,15 +138,15 @@
                         } else if (sortOrder === "high") {
                             return bValue - aValue;
                         } else {
-                            return 0; // デフォルト以外の場合はソートなし
+                            return 0;
                         }
                     });
                 }
 
-                // ソートされた行を再度tbodyに追加します
-                tbody.empty();
+                // ソート・フィルタリングされた行を再度tbodyに追加
+                $("tbody").empty();
                 $.each(rows, function (index, row) {
-                    tbody.append(row);
+                    $("tbody").append(row);
                 });
             }
         </script>
