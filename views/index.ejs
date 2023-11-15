@@ -22,7 +22,8 @@
             }
 
             h1 {
-                margin: 0;
+                margin: 0 0 15px 0;
+                font-size: 25px;
             }
 
             table {
@@ -48,6 +49,56 @@
             tbody tr:hover {
                 background-color: #f5f5f5;
             }
+
+            label {
+                font-weight: bold;
+                margin-right: 2px;
+            }
+
+            select {
+                padding: 2px;
+                margin-right: 5px;
+            }
+
+            #statisticsResult {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-top: 15px;
+            }
+
+            #statisticsButton {
+                padding: 2px 5px;
+                background-color: #4caf50;
+                color: #fff;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-left: 10px;
+            }
+
+            #statisticsButton:hover {
+                background-color: #45a049;
+            }
+
+            /*統計結果表示後のスタイル */
+            #yearsOld {
+                font-weight: bold;
+            }
+
+            /*ボタンを押し後のスタイル*/
+            #statisticsResult.clicked {
+                display: grid;
+            }
+
+            /*ボタンを押した後buttonのスタイル */
+            #statisticsResult.clicked #statisticsButton {
+                background-color: #45a049;
+                width: 30%;
+                margin: auto;
+                padding: 2px 5px;
+                color: #fff;
+            }
         </style>
     </head>
     <body>
@@ -68,6 +119,11 @@
                 <option value="4">評価4</option>
                 <option value="5">評価5</option>
             </select>
+            <div id="statisticsResult">
+                <label for="eraStatistics">各年代：</label>
+                <span id="yearsOld"> - 人</span>
+                <button id="statisticsButton" class="customButton">統計を取得</button>
+            </div>
         </header>
         <table>
             <thead>
@@ -100,16 +156,18 @@
                     <% }); %>
             </tbody>
         </table>
-        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
         <script>
-            //DOMが読み込まれたときにイベント発生させる
-            document.addEventListener("DOMContentLoaded", function () {
-                let originalData;
-                // 初回ロード時のデータを保持
-                originalData = Array.from(document.querySelectorAll("tbody tr"));
+            // getAgeGroupの定義
+            function getAgeGroup(age) {
+                let base = 10;
+                return `${Math.floor(age / base) * base}代`;
+            }
 
-                //sortSelectはソート
-                //filterSelectは絞り込み
+            document.addEventListener("DOMContentLoaded", function () {
+                // 初回ロード時のデータを保持
+                let originalData = Array.from(document.querySelectorAll("tbody tr"));
+
+                // sortSelectはソート、filterSelectは絞り込み
                 document.getElementById("sortSelect").addEventListener("change", sortAndFilterTable);
                 document.getElementById("filterSelect").addEventListener("change", sortAndFilterTable);
 
@@ -143,6 +201,33 @@
                         tbody.appendChild(row);
                     });
                 }
+            });
+
+            document.getElementById("statisticsResult").addEventListener("click", function () {
+                // 統計情報の初期化
+                let ageGroups = {};
+
+                // 選択された情報から統計情報を計算
+                let personas = JSON.parse('<%= JSON.stringify(personas) %>'.replace(/&#34;/g, '"'));
+                personas.forEach(function (persona) {
+                    let ageGroup = getAgeGroup(persona.age);
+                    // ageGroupsの統計情報を計算
+                    if (ageGroups[ageGroup]) {
+                        ageGroups[ageGroup]++;
+                    } else {
+                        ageGroups[ageGroup] = 1;
+                    }
+                });
+
+                // yearsOldTextの初期化
+                let yearsOldText = "";
+                for (const ageGroup in ageGroups) {
+                    yearsOldText += `${ageGroup}： ${ageGroups[ageGroup]} 人 `;
+                }
+
+                // 表示
+                document.getElementById("yearsOld").textContent = yearsOldText;
+                this.classList.add("clicked");
             });
         </script>
     </body>
