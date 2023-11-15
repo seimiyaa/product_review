@@ -104,7 +104,7 @@
         <script>
             //DOMが読み込まれたときにイベント発生させる
             document.addEventListener("DOMContentLoaded", function () {
-                var originalData;
+                let originalData;
                 // 初回ロード時のデータを保持
                 originalData = Array.from(document.querySelectorAll("tbody tr"));
 
@@ -114,30 +114,30 @@
                 document.getElementById("filterSelect").addEventListener("change", sortAndFilterTable);
 
                 function sortAndFilterTable() {
-                    var sortOrder = document.getElementById("sortSelect").value;
-                    var filterValue = document.getElementById("filterSelect").value;
+                    let sortOrder = document.getElementById("sortSelect").value;
+                    let filterValue = document.getElementById("filterSelect").value;
 
                     // 元のデータからコピーを作成
-                    var rows = originalData.slice();
+                    let rows = originalData.slice();
 
                     // フィルタリング
                     rows = rows.filter(function (row) {
-                        var rowRating = parseInt(row.querySelector("td[data-rating]").getAttribute("data-rating"), 10);
+                        let rowRating = parseInt(row.querySelector("td[data-rating]").getAttribute("data-rating"), 10);
                         return filterValue === "all" || rowRating === parseInt(filterValue, 10);
                     });
 
                     // ソート
                     if (sortOrder !== "default") {
                         rows.sort(function (a, b) {
-                            var aValue = parseInt(a.querySelector("td[data-rating]").getAttribute("data-rating"), 10);
-                            var bValue = parseInt(b.querySelector("td[data-rating]").getAttribute("data-rating"), 10);
+                            let aValue = parseInt(a.querySelector("td[data-rating]").getAttribute("data-rating"), 10);
+                            let bValue = parseInt(b.querySelector("td[data-rating]").getAttribute("data-rating"), 10);
 
                             return sortOrder === "low" ? aValue - bValue : bValue - aValue;
                         });
                     }
 
                     // ソート・フィルタリングされた行を再度tbodyに追加
-                    var tbody = document.querySelector("tbody");
+                    let tbody = document.querySelector("tbody");
                     tbody.innerHTML = "";
                     rows.forEach(function (row) {
                         tbody.appendChild(row);
