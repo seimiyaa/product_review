@@ -80,8 +80,7 @@
                 </tr>
             </thead>
             <tbody>
-                <% personas.forEach(item=> { %>
-                    <tr>
+                <% personas.forEach(item=> { %> <tr>
                         <td>
                             <%= item.id %>
                         </td>
@@ -98,57 +97,53 @@
                             <%= item.reason %>
                         </td>
                     </tr>
-                <% }); %>
+                    <% }); %>
             </tbody>
         </table>
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
         <script>
-            // 元のデータを保持するための変数
-            var originalRows;
+            //DOMが読み込まれたときにイベント発生させる
+            document.addEventListener("DOMContentLoaded", function () {
+                var originalData;
+                // 初回ロード時のデータを保持
+                originalData = Array.from(document.querySelectorAll("tbody tr"));
 
-            $(document).ready(function () {
-                // 初回ロード時にデータをバックアップ
-                originalRows = $("tbody tr").toArray();
-                $("#sortSelect, #filterSelect").change(function () {
-                    sortAndFilterTable();
-                });
-            });
+                //sortSelectはソート
+                //filterSelectは絞り込み
+                document.getElementById("sortSelect").addEventListener("change", sortAndFilterTable);
+                document.getElementById("filterSelect").addEventListener("change", sortAndFilterTable);
 
-            function sortAndFilterTable() {
-                var sortOrder = $("#sortSelect").val();
-                var filterValue = $("#filterSelect").val();
+                function sortAndFilterTable() {
+                    var sortOrder = document.getElementById("sortSelect").value;
+                    var filterValue = document.getElementById("filterSelect").value;
 
-                // 元のデータからコピーを作成2回目の検索できなくなっちゃうから
-                var rows = originalRows.slice();
+                    // 元のデータからコピーを作成
+                    var rows = originalData.slice();
 
-                // フィルタリング
-                rows = rows.filter(function (row) {
-                    var rowRating = parseInt($(row).find("td[data-rating]").data("rating"));
-                    return filterValue === "all" || rowRating === parseInt(filterValue);
-                });
+                    // フィルタリング
+                    rows = rows.filter(function (row) {
+                        var rowRating = parseInt(row.querySelector("td[data-rating]").getAttribute("data-rating"), 10);
+                        return filterValue === "all" || rowRating === parseInt(filterValue, 10);
+                    });
 
-                // ソート
-                if (sortOrder !== "default") {
-                    rows.sort(function (a, b) {
-                        var aValue = parseInt($(a).find("td[data-rating]").data("rating"));
-                        var bValue = parseInt($(b).find("td[data-rating]").data("rating"));
+                    // ソート
+                    if (sortOrder !== "default") {
+                        rows.sort(function (a, b) {
+                            var aValue = parseInt(a.querySelector("td[data-rating]").getAttribute("data-rating"), 10);
+                            var bValue = parseInt(b.querySelector("td[data-rating]").getAttribute("data-rating"), 10);
 
-                        if (sortOrder === "low") {
-                            return aValue - bValue;
-                        } else if (sortOrder === "high") {
-                            return bValue - aValue;
-                        } else {
-                            return 0;
-                        }
+                            return sortOrder === "low" ? aValue - bValue : bValue - aValue;
+                        });
+                    }
+
+                    // ソート・フィルタリングされた行を再度tbodyに追加
+                    var tbody = document.querySelector("tbody");
+                    tbody.innerHTML = "";
+                    rows.forEach(function (row) {
+                        tbody.appendChild(row);
                     });
                 }
-
-                // ソート・フィルタリングされた行を再度tbodyに追加
-                $("tbody").empty();
-                $.each(rows, function (index, row) {
-                    $("tbody").append(row);
-                });
-            }
+            });
         </script>
     </body>
 </html>
