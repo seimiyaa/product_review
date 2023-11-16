@@ -204,6 +204,20 @@
                 border-radius: 4px;
                 cursor: pointer;
             }
+
+            .update-button {
+                display: inline-block;
+                padding: 8px 12px;
+                background-color: #4CAF50;
+                color: #fff;
+                text-decoration: none;
+                border-radius: 4px;
+                transition: background-color 0.3s;
+            }
+
+            .update-button:hover {
+                background-color: #45a049;
+            }
         </style>
     </head>
     <body>
@@ -269,6 +283,7 @@
                     <th>評価</th>
                     <th>レビュー理由</th>
                     <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -289,7 +304,10 @@
                             <%= item.reason %>
                         </td>
                         <td>
-                            <a href="/delete/<%= item.id %>">削除</a>
+                            <a class="update-button" href="/delete/<%= item.id %>">削除</a>
+                        </td>
+                        <td>
+                            <a class="update-button" href="/update/<%= item.id %>">編集</a>
                         </td>
                     </tr>
                     <% }); %>
