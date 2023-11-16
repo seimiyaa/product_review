@@ -57,6 +57,16 @@ app.get("/edit/:id", (req, res) => {
   });
 });
 
+app.get("/update/:id", (req, res) => {
+  const sql = "SELECT * FROM personas WHERE id = ?";
+  con.query(sql, [req.params.id], function (err, result, fields) {
+    if (err) throw err;
+    res.render("update", {
+      persona: result[0],
+    });
+  });
+});
+
 app.post("/update/:id", (req, res) => {
   const sql = "UPDATE personas SET ? WHERE id = " + req.params.id;
   con.query(sql, req.body, function (err, result, fields) {
