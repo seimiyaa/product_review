@@ -26,6 +26,79 @@
                 font-size: 25px;
             }
 
+            label {
+                font-weight: bold;
+                margin-right: 8px;
+                color: #333;
+            }
+
+            #sortSelect,
+            #filterSelect {
+                margin-bottom: 10px;
+                padding: 8px;
+                margin-right: 10px;
+                border-radius: 4px;
+            }
+
+            #statisticsResult {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-top: 15px;
+            }
+
+            #statisticsButton {
+                padding: 8px 15px;
+                background-color: #4caf50;
+                color: #fff;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-left: 10px;
+            }
+
+            #statisticsButton:hover {
+                background-color: #45a049;
+            }
+
+            #newInfoAddition {
+                width: 400px;
+                margin: 20px auto;
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                text-align: center;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                background-color: #fff;
+            }
+
+            .newReview {
+                text-align: left;
+            }
+
+            #reviewForm label,
+            #reviewForm input,
+            #reviewForm select,
+            #reviewForm textarea {
+                margin-bottom: 10px;
+                box-sizing: border-box;
+            }
+
+            #reviewForm button {
+                width: 30%;
+                margin: auto;
+                padding: 10px;
+                background-color: #4caf50;
+                color: #fff;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            #reviewForm button:hover {
+                background-color: #45a049;
+            }
+
             table {
                 width: 100%;
                 margin: 2em auto;
@@ -36,7 +109,7 @@
 
             th,
             td {
-                padding: 1em;
+                padding: 8px;
                 text-align: left;
                 border-bottom: 1px solid #ddd;
             }
@@ -50,54 +123,86 @@
                 background-color: #f5f5f5;
             }
 
-            label {
-                font-weight: bold;
-                margin-right: 2px;
+            #newInfoAddition {
+                width: 400px;
+                margin: 20px auto;
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                background-color: #fff;
             }
 
-            select {
-                padding: 2px;
-                margin-right: 5px;
+            .addition {
+                text-align: center;
+                margin-bottom: 15px;
+                margin: 0 0 15px 0;
             }
 
-            #statisticsResult {
+            #newInfoAddition {
+                width: 50%;
+                margin: 20px auto;
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                background-color: #fff;
+            }
+
+            .form-group label {
+                width: 50%;
+            }
+
+            .newReview {
+                text-align: right;
+                margin-bottom: 5px;
+            }
+
+            #reviewForm input,
+            #reviewForm select,
+            #reviewForm textarea {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            #reviewForm select {
+                margin-right: 0;
+            }
+
+            #reviewForm select {
+                margin: 0;
+                padding: 8px;
+                box-sizing: border-box;
+            }
+
+            .form-group {
                 display: flex;
-                align-items: center;
-                justify-content: center;
-                margin-top: 15px;
+                width: 100%;
+                margin-bottom: 10px;
             }
 
-            #statisticsButton {
-                padding: 2px 5px;
+            .form-group label {
+                width: 50%;
+                text-align: right;
+                margin-right: 10px;
+            }
+
+            #reviewForm input,
+            #reviewForm textarea {
+                width: 100%;
+                padding: 8px;
+                box-sizing: border-box;
+            }
+
+            #reviewForm button {
+                width: 30%;
+                margin: auto;
+                padding: 10px;
                 background-color: #4caf50;
                 color: #fff;
                 border: none;
                 border-radius: 4px;
                 cursor: pointer;
-                margin-left: 10px;
-            }
-
-            #statisticsButton:hover {
-                background-color: #45a049;
-            }
-
-            /*統計結果表示後のスタイル */
-            #yearsOld {
-                font-weight: bold;
-            }
-
-            /*ボタンを押し後のスタイル*/
-            #statisticsResult.clicked {
-                display: grid;
-            }
-
-            /*ボタンを押した後buttonのスタイル */
-            #statisticsResult.clicked #statisticsButton {
-                background-color: #45a049;
-                width: 30%;
-                margin: auto;
-                padding: 2px 5px;
-                color: #fff;
             }
         </style>
     </head>
@@ -125,6 +230,36 @@
                 <button id="statisticsButton" class="customButton">統計を取得</button>
             </div>
         </header>
+        <div id="newInfoAddition">
+            <h2 class="addition">新規レビュー追加</h2>
+            <form id="reviewForm" action="/" method="POST" onsubmit="return addReview()">
+                <div class="form-group">
+                    <label for="username" class="newReview">ユーザー名:</label>
+                    <input type="text" id="username" name="username">
+                </div>
+                <div class="form-group">
+                    <label for="age" class="newReview">年齢:</label>
+                    <input type="number" id="age" name="age">
+                </div>
+                <div class="form-group">
+                    <label for="rating" class="newReview">評価:</label>
+                    <select id="rating" name="rating">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="reason" class="newReview">レビュー理由:</label>
+                    <textarea id="reason" name="reason" required></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit">追加</button>
+                </div>
+            </form>
+        </div>
         <table>
             <thead>
                 <tr>
@@ -133,6 +268,7 @@
                     <th>年齢</th>
                     <th>評価</th>
                     <th>レビュー理由</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -152,16 +288,37 @@
                         <td>
                             <%= item.reason %>
                         </td>
+                        <td>
+                            <a href="/delete/<%= item.id %>">削除</a>
+                        </td>
                     </tr>
                     <% }); %>
             </tbody>
         </table>
         <script>
+            function addReview() {
+                let username = document.getElementById("username").value;
+                let age = document.getElementById("age").value;
+                let rating = document.getElementById("rating").value;
+                let reason = document.getElementById("reason").value;
+
+                // 名前のバリデーション
+                let nameCheck = /^[ぁ-んァ-ン一-龯]+$/;
+
+                if (!nameCheck.test(username)) {
+                    alert("名前は漢字とひらがなのみ入力可");
+                    return false; // フォーム送信を中止
+                }
+
+                // バリデーションが成功したらフォーム送信を許可
+                return true;
+            }
+
             // getAgeGroupの定義
             function getAgeGroup(age) {
                 let base = 10;
                 return `${Math.floor(age / base) * base}代`;
-            }
+            };
 
             document.addEventListener("DOMContentLoaded", function () {
                 // 初回ロード時のデータを保持
@@ -189,7 +346,6 @@
                         rows.sort(function (a, b) {
                             let aValue = parseInt(a.querySelector("td[data-rating]").getAttribute("data-rating"), 10);
                             let bValue = parseInt(b.querySelector("td[data-rating]").getAttribute("data-rating"), 10);
-
                             return sortOrder === "low" ? aValue - bValue : bValue - aValue;
                         });
                     }
@@ -209,8 +365,10 @@
 
                 // 選択された情報から統計情報を計算
                 let personas = JSON.parse('<%= JSON.stringify(personas) %>'.replace(/&#34;/g, '"'));
+
                 personas.forEach(function (persona) {
                     let ageGroup = getAgeGroup(persona.age);
+
                     // ageGroupsの統計情報を計算
                     if (ageGroups[ageGroup]) {
                         ageGroups[ageGroup]++;
@@ -218,13 +376,11 @@
                         ageGroups[ageGroup] = 1;
                     }
                 });
-
                 // yearsOldTextの初期化
                 let yearsOldText = "";
                 for (const ageGroup in ageGroups) {
                     yearsOldText += `${ageGroup}： ${ageGroups[ageGroup]} 人 `;
                 }
-
                 // 表示
                 document.getElementById("yearsOld").textContent = yearsOldText;
                 this.classList.add("clicked");

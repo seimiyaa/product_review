@@ -7,7 +7,6 @@ const port = 3000;
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
-
 const mysql = require("mysql2");
 
 const con = mysql.createConnection({
@@ -26,12 +25,21 @@ app.get("/", (req, res) => {
     });
   });
 });
+
 app.post("/", (req, res) => {
   const sql = "INSERT INTO personas SET ?";
-  con.query(sql, req.body, function (err, personas, fields) {
+  con.query(sql, req.body, function (err, result, fields) {
     if (err) throw err;
-    console.log(personas);
-    res.redirect("/");
+    console.log(result);
+
+    // レビューを追加した後、再びすべてのレビューを取得してホームページにリダイレクト
+    const selectAllSql = "SELECT * FROM personas";
+    con.query(selectAllSql, function (err, personas, fields) {
+      if (err) throw err;
+      res.render("index", {
+        personas: personas,
+      });
+    });
   });
 });
 
