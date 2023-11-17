@@ -224,13 +224,13 @@
         <header>
             <h1>商品レビュー表</h1>
             <label for="sortSelect">評価順：</label>
-            <select id="sortSelect" onchange="sortTable()">
+            <select id="sortSelect">
                 <option value="default">デフォルト</option>
                 <option value="high">高い順</option>
                 <option value="low">低い順</option>
             </select>
             <label for="filterSelect">評価絞り込み：</label>
-            <select id="filterSelect" onchange="filterTable()">
+            <select id="filterSelect">
                 <option value="all">すべて</option>
                 <option value="1">評価1</option>
                 <option value="2">評価2</option>
@@ -338,44 +338,6 @@
                 return `${Math.floor(age / base) * base}代`;
             };
 
-            document.addEventListener("DOMContentLoaded", function () {
-                // 初回ロード時のデータを保持
-                let originalData = Array.from(document.querySelectorAll("tbody tr"));
-
-                // sortSelectはソート、filterSelectは絞り込み
-                document.getElementById("sortSelect").addEventListener("change", sortAndFilterTable);
-                document.getElementById("filterSelect").addEventListener("change", sortAndFilterTable);
-
-                function sortAndFilterTable() {
-                    let sortOrder = document.getElementById("sortSelect").value;
-                    let filterValue = document.getElementById("filterSelect").value;
-
-                    // 元のデータからコピーを作成
-                    let rows = originalData.slice();
-
-                    // フィルタリング
-                    rows = rows.filter(function (row) {
-                        let rowRating = parseInt(row.querySelector("td[data-rating]").getAttribute("data-rating"), 10);
-                        return filterValue === "all" || rowRating === parseInt(filterValue, 10);
-                    });
-
-                    // ソート
-                    if (sortOrder !== "default") {
-                        rows.sort(function (a, b) {
-                            let aValue = parseInt(a.querySelector("td[data-rating]").getAttribute("data-rating"), 10);
-                            let bValue = parseInt(b.querySelector("td[data-rating]").getAttribute("data-rating"), 10);
-                            return sortOrder === "low" ? aValue - bValue : bValue - aValue;
-                        });
-                    }
-
-                    // ソート・フィルタリングされた行を再度tbodyに追加
-                    let tbody = document.querySelector("tbody");
-                    tbody.innerHTML = "";
-                    rows.forEach(function (row) {
-                        tbody.appendChild(row);
-                    });
-                }
-            });
 
             document.getElementById("statisticsResult").addEventListener("click", function () {
                 // 統計情報の初期化
