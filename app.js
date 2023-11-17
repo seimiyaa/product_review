@@ -43,20 +43,6 @@ app.post("/", (req, res) => {
   });
 });
 
-app.get("/create", (req, res) => {
-  res.sendFile(path.join(__dirname, "html/form.html"));
-});
-
-app.get("/edit/:id", (req, res) => {
-  const sql = "SELECT * FROM personas WHERE id = ?";
-  con.query(sql, [req.params.id], function (err, result, fields) {
-    if (err) throw err;
-    res.render("edit", {
-      persona: result[0],
-    });
-  });
-});
-
 app.get("/update/:id", (req, res) => {
   const sql = "SELECT * FROM personas WHERE id = ?";
   con.query(sql, [req.params.id], function (err, result, fields) {
