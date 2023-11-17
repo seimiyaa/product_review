@@ -218,26 +218,37 @@
             .update-button:hover {
                 background-color: #45a049;
             }
+
+            .sortAndfilter {
+                display: flex;
+                align-items: baseline;
+                justify-content: center;
+                margin-top: 15px;
+            }
         </style>
     </head>
     <body>
         <header>
             <h1>商品レビュー表</h1>
-            <label for="sortSelect">評価順：</label>
-            <select id="sortSelect" onchange="sortTable()">
-                <option value="default">デフォルト</option>
-                <option value="high">高い順</option>
-                <option value="low">低い順</option>
-            </select>
-            <label for="filterSelect">評価絞り込み：</label>
-            <select id="filterSelect" onchange="filterTable()">
-                <option value="all">すべて</option>
-                <option value="1">評価1</option>
-                <option value="2">評価2</option>
-                <option value="3">評価3</option>
-                <option value="4">評価4</option>
-                <option value="5">評価5</option>
-            </select>
+            <div class="sortAndfilter">
+                <form action="/" method="GET" id="sortForm">
+                    <label for="sortSelect">評価順：</label>
+                    <select id="sortSelect" name="option" onchange="submitSortForm()">
+                        <option value="default" <% if (!req.query.option || req.query.option==='default' ) { %> selected <% } %>>デフォルト</option>
+                        <option value="high" <% if (req.query.option==='high' ) { %> selected <% } %>>高い順</option>
+                        <option value="low" <% if (req.query.option==='low' ) { %> selected <% } %>>低い順</option>
+                    </select>
+                </form>
+                <label for="filterSelect">評価絞り込み：</label>
+                <select id="filterSelect" onchange="filterTable()">
+                    <option value="all">すべて</option>
+                    <option value="1">評価1</option>
+                    <option value="2">評価2</option>
+                    <option value="3">評価3</option>
+                    <option value="4">評価4</option>
+                    <option value="5">評価5</option>
+                </select>
+            </div>
             <div id="statisticsResult">
                 <label for="eraStatistics">各年代：</label>
                 <span id="yearsOld"> - 人</span>
@@ -297,7 +308,7 @@
                         <td>
                             <%= item.age %>
                         </td>
-                        <td data-rating="<%= item.rating %>">
+                        <td data-rating="<%= item.rating %>" ng-repeat="personas in personas | orderBy:sort">
                             <%= item.rating %>
                         </td>
                         <td>
@@ -314,6 +325,10 @@
             </tbody>
         </table>
         <script>
+            function submitSortForm() {
+                document.getElementById("sortForm").submit();
+            }
+
             function addReview() {
                 let username = document.getElementById("username").value;
                 let age = document.getElementById("age").value;
@@ -338,6 +353,7 @@
                 return `${Math.floor(age / base) * base}代`;
             };
 
+
             document.addEventListener("DOMContentLoaded", function () {
                 // 初回ロード時のデータを保持
                 let originalData = Array.from(document.querySelectorAll("tbody tr"));
@@ -359,14 +375,6 @@
                         return filterValue === "all" || rowRating === parseInt(filterValue, 10);
                     });
 
-                    // ソート
-                    if (sortOrder !== "default") {
-                        rows.sort(function (a, b) {
-                            let aValue = parseInt(a.querySelector("td[data-rating]").getAttribute("data-rating"), 10);
-                            let bValue = parseInt(b.querySelector("td[data-rating]").getAttribute("data-rating"), 10);
-                            return sortOrder === "low" ? aValue - bValue : bValue - aValue;
-                        });
-                    }
 
                     // ソート・フィルタリングされた行を再度tbodyに追加
                     let tbody = document.querySelector("tbody");
@@ -376,6 +384,7 @@
                     });
                 }
             });
+
 
             document.getElementById("statisticsResult").addEventListener("click", function () {
                 // 統計情報の初期化
