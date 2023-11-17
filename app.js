@@ -17,11 +17,22 @@ const con = mysql.createConnection({
 });
 
 app.get("/", (req, res) => {
-  const sql = "SELECT * FROM personas";
+  let sortBy = "";
+
+  if (!req.query.option || req.query.option === "default") {
+    sortBy = "id ASC";
+  } else if (req.query.option === "low") {
+    sortBy = "rating ASC";
+  } else if (req.query.option === "high") {
+    sortBy = "rating DESC";
+  }
+
+  const sql = `SELECT * FROM personas ORDER BY ${sortBy}`;
   con.query(sql, function (err, personas, fields) {
     if (err) throw err;
     res.render("index", {
       personas: personas,
+      req: req,
     });
   });
 });
@@ -33,16 +44,16 @@ app.post("/", (req, res) => {
     console.log(result);
 
     // レビューを追加した後、再びすべてのレビューを取得してホームページにリダイレクト
-    const selectAllSql = "SELECT * FROM personas";
+    const selectAllSql = "SELECT * FROM personas ORDER BY id ASC"; // 適切なソート条件を指定する
     con.query(selectAllSql, function (err, personas, fields) {
       if (err) throw err;
       res.render("index", {
         personas: personas,
+        req: req,
       });
     });
   });
 });
-
 
 app.get("/update/:id", (req, res) => {
   const sql = "SELECT * FROM personas WHERE id = ?";
