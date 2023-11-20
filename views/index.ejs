@@ -239,15 +239,17 @@
                         <option value="low" <% if (req.query.option==='low' ) { %> selected <% } %>>低い順</option>
                     </select>
                 </form>
-                <label for="filterSelect">評価絞り込み：</label>
-                <select id="filterSelect" onchange="filterTable()">
-                    <option value="all">すべて</option>
-                    <option value="1">評価1</option>
-                    <option value="2">評価2</option>
-                    <option value="3">評価3</option>
-                    <option value="4">評価4</option>
-                    <option value="5">評価5</option>
-                </select>
+                <form action="/" method="GET" id="filterForm">
+                    <label for="filterSelect">評価絞り込み：</label>
+                    <select id="filterSelect" name="filter" onchange="submitFilterForm()">
+                        <option value="all" <% if (!req.query.filter || req.query.filter==='all' ) { %> selected <% } %>>すべて</option>
+                        <option value="1" <% if (req.query.filter==='1' ) { %> selected <% } %>>評価1</option>
+                        <option value="2" <% if (req.query.filter==='2' ) { %> selected <% } %>>評価2</option>
+                        <option value="3" <% if (req.query.filter==='3' ) { %> selected <% } %>>評価3</option>
+                        <option value="4" <% if (req.query.filter==='4' ) { %> selected <% } %>>評価4</option>
+                        <option value="5" <% if (req.query.filter==='5' ) { %> selected <% } %>>評価5</option>
+                    </select>
+                </form>
             </div>
             <div id="statisticsResult">
                 <label for="eraStatistics">各年代：</label>
@@ -329,6 +331,10 @@
                 document.getElementById("sortForm").submit();
             }
 
+            function submitFilterForm() {
+                document.getElementById("filterForm").submit();
+            }
+
             function addReview() {
                 let username = document.getElementById("username").value;
                 let age = document.getElementById("age").value;
@@ -352,39 +358,6 @@
                 let base = 10;
                 return `${Math.floor(age / base) * base}代`;
             };
-
-
-            document.addEventListener("DOMContentLoaded", function () {
-                // 初回ロード時のデータを保持
-                let originalData = Array.from(document.querySelectorAll("tbody tr"));
-
-                // sortSelectはソート、filterSelectは絞り込み
-                document.getElementById("sortSelect").addEventListener("change", sortAndFilterTable);
-                document.getElementById("filterSelect").addEventListener("change", sortAndFilterTable);
-
-                function sortAndFilterTable() {
-                    let sortOrder = document.getElementById("sortSelect").value;
-                    let filterValue = document.getElementById("filterSelect").value;
-
-                    // 元のデータからコピーを作成
-                    let rows = originalData.slice();
-
-                    // フィルタリング
-                    rows = rows.filter(function (row) {
-                        let rowRating = parseInt(row.querySelector("td[data-rating]").getAttribute("data-rating"), 10);
-                        return filterValue === "all" || rowRating === parseInt(filterValue, 10);
-                    });
-
-
-                    // ソート・フィルタリングされた行を再度tbodyに追加
-                    let tbody = document.querySelector("tbody");
-                    tbody.innerHTML = "";
-                    rows.forEach(function (row) {
-                        tbody.appendChild(row);
-                    });
-                }
-            });
-
 
             document.getElementById("statisticsResult").addEventListener("click", function () {
                 // 統計情報の初期化
