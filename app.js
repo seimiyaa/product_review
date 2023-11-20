@@ -19,6 +19,7 @@ const con = mysql.createConnection({
 app.get("/", (req, res) => {
   let sortBy = "";
 
+  //ソート
   if (!req.query.option || req.query.option === "default") {
     sortBy = "id ASC";
   } else if (req.query.option === "low") {
@@ -27,7 +28,13 @@ app.get("/", (req, res) => {
     sortBy = "rating DESC";
   }
 
-  const sql = `SELECT * FROM personas ORDER BY ${sortBy}`;
+  //絞り込み
+  const filterValue = req.query.filter || "all";
+  const filterBy =
+    filterValue !== "all" ? `WHERE rating = ${con.escape(filterValue)}` : "";
+
+  const sql = `SELECT * FROM personas ${filterBy} ORDER BY ${sortBy}`;
+
   con.query(sql, function (err, personas, fields) {
     if (err) throw err;
     res.render("index", {
@@ -44,7 +51,7 @@ app.post("/", (req, res) => {
     console.log(result);
 
     // レビューを追加した後、再びすべてのレビューを取得してホームページにリダイレクト
-    const selectAllSql = "SELECT * FROM personas ORDER BY id ASC"; // 適切なソート条件を指定する
+    const selectAllSql = "SELECT * FROM personas ORDER BY id ASC";
     con.query(selectAllSql, function (err, personas, fields) {
       if (err) throw err;
       res.render("index", {
